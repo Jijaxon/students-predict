@@ -3,9 +3,9 @@ import pandas as pd
 import joblib
 import os
 from sklearn.tree import DecisionTreeClassifier
-from app.core.config import settings
-from app.services.clustering_service import get_clusters, get_kmeans, get_scaler, train_kmeans
-from app.utils.preprocessing import load_dataset, normalize_features, FEATURES, get_cluster_label
+from ..core.config import settings
+from ..services.clustering_service import get_kmeans, get_scaler, train_kmeans
+from ..utils.preprocessing import load_dataset, normalize_features, FEATURES, get_cluster_label
 
 _dt_cache = {}
 

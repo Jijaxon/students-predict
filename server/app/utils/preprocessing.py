@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 FEATURES = ["study_hours", "attendance", "exam_score"]

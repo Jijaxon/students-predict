@@ -4,8 +4,8 @@ import joblib
 import os
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from app.core.config import settings
-from app.utils.preprocessing import load_dataset, normalize_features, compute_correlation_matrix, get_cluster_label, detect_at_risk_students, FEATURES
+from ..core.config import settings
+from ..utils.preprocessing import load_dataset, normalize_features, compute_correlation_matrix, get_cluster_label, detect_at_risk_students, FEATURES
 
 # In-memory cache
 _cache = {}
@@ -124,11 +124,20 @@ def get_elbow_data(max_k: int = 10) -> dict:
     }
 
 def retrain_models() -> dict:
-    """Clear cache and retrain all models."""
+    """Clear cache and retrain all models (KMeans and DBSCAN)."""
     _cache.clear()
     df = load_dataset(settings.DATASET_PATH)
     for k in [2, 3, 4, 5]:
         train_kmeans(df, k)
+    
+    # Also retrain DBSCAN
+    try:
+        from .dbscan_service import train_dbscan, clear_dbscan_cache
+        clear_dbscan_cache()
+        train_dbscan(df)
+    except Exception as e:
+        print(f"DBSCAN retrain warning: {e}")
+    
     return {"status": "retrained", "n_students": len(df)}
 
 def get_correlation_data() -> dict:

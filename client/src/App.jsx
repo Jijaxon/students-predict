@@ -4,6 +4,7 @@ import { store } from './store/store'
 import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Clustering from './pages/Clustering'
+import Comparison from './pages/Comparison'
 import PredictStudent from './pages/PredictStudent'
 import './index.css'
 
@@ -23,6 +24,7 @@ export default function App() {
             <Routes>
               <Route path="/"           element={<Dashboard />} />
               <Route path="/clustering" element={<Clustering />} />
+              <Route path="/comparison" element={<Comparison />} />
               <Route path="/predict"    element={<PredictStudent />} />
             </Routes>
           </main>

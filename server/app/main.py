@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.api.routes import students, clustering, prediction
-from app.services.clustering_service import retrain_models
+from .core.config import settings
+from .api.routes import students, clustering, prediction
+from .services.clustering_service import retrain_models
 import uvicorn
 
 app = FastAPI(

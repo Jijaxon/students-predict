@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import { BarChart2, GitBranch, Zap, GraduationCap } from 'lucide-react'
+import { BarChart2, GitBranch, Zap, GraduationCap, TrendingUp } from 'lucide-react'
 import ThemeToggle from './ui/ThemeToggle'
 
 const NAV_ITEMS = [
-  { to: '/',           label: 'Dashboard',  icon: BarChart2 },
-  { to: '/clustering', label: 'Clustering', icon: GitBranch },
-  { to: '/predict',    label: 'Predict',    icon: Zap },
+  { to: '/',           label: 'Dashboard',    icon: BarChart2 },
+  { to: '/clustering', label: 'Clustering',   icon: GitBranch },
+  { to: '/comparison', label: 'Comparison',   icon: TrendingUp },
+  { to: '/predict',    label: 'Predict',      icon: Zap },
 ]
 
 export default function Navbar() {

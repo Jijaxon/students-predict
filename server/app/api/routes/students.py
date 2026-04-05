@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, UploadFile, File
-from app.core.config import settings
-from app.utils.preprocessing import load_dataset, compute_correlation_matrix
-from app.services.clustering_service import retrain_models, get_correlation_data
+from ...core.config import settings
+from ...utils.preprocessing import load_dataset, compute_correlation_matrix
+from ...services.clustering_service import retrain_models, get_correlation_data
 import pandas as pd
 import io
 
