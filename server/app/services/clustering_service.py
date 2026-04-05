@@ -130,14 +130,20 @@ def retrain_models() -> dict:
     for k in [2, 3, 4, 5]:
         train_kmeans(df, k)
     
-    # Also retrain DBSCAN
+    # Also retrain DBSCAN and clear prediction cache
     try:
         from .dbscan_service import train_dbscan, clear_dbscan_cache
         clear_dbscan_cache()
         train_dbscan(df)
     except Exception as e:
         print(f"DBSCAN retrain warning: {e}")
-    
+
+    try:
+        from .prediction_service import clear_prediction_cache
+        clear_prediction_cache()
+    except Exception as e:
+        print(f"Prediction cache clear warning: {e}")
+
     return {"status": "retrained", "n_students": len(df)}
 
 def get_correlation_data() -> dict:

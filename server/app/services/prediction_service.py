@@ -8,10 +8,39 @@ from ..services.clustering_service import get_kmeans, get_scaler, train_kmeans
 from ..utils.preprocessing import load_dataset, normalize_features, FEATURES, get_cluster_label
 
 _dt_cache = {}
+_prediction_cache = {}
 
 def _get_dt_path(n_clusters: int) -> str:
     os.makedirs(settings.MODEL_DIR, exist_ok=True)
     return os.path.join(settings.MODEL_DIR, f"decision_tree_{n_clusters}.pkl")
+
+
+def _prepare_prediction_cache(n_clusters: int):
+    """Cache dataset, scaled features, and KMeans labels for fast prediction."""
+    if n_clusters in _prediction_cache:
+        return _prediction_cache[n_clusters]
+
+    df = load_dataset(settings.DATASET_PATH)
+    scaler = get_scaler()
+    X_all = scaler.transform(df[FEATURES])
+    kmeans = get_kmeans(n_clusters)
+    labels = kmeans.predict(X_all)
+
+    df_cached = df.copy()
+    df_cached["cluster"] = labels
+
+    cache_entry = {
+        "df": df_cached,
+        "X_all": X_all,
+        "labels": labels,
+    }
+    _prediction_cache[n_clusters] = cache_entry
+    return cache_entry
+
+
+def clear_prediction_cache():
+    """Clear cached prediction data when dataset or models are retrained."""
+    _prediction_cache.clear()
 
 def train_decision_tree(n_clusters: int = 3) -> DecisionTreeClassifier:
     """Train Decision Tree on cluster labels from KMeans."""
@@ -42,22 +71,17 @@ def predict_student(study_hours: float, attendance: float, exam_score: float, n_
     """Predict cluster for a new student and find similar students."""
     scaler = get_scaler()
     dt = get_decision_tree(n_clusters)
-    
+    prediction_cache = _prepare_prediction_cache(n_clusters)
+    df = prediction_cache["df"]
+
     # Prepare input as DataFrame to preserve feature names
     X_input = pd.DataFrame([[study_hours, attendance, exam_score]], columns=FEATURES)
     X_scaled = scaler.transform(X_input)
-    
+
     predicted_cluster = int(dt.predict(X_scaled)[0])
     proba = dt.predict_proba(X_scaled)[0]
     confidence = round(float(proba[predicted_cluster]) * 100, 1)
-    
-    # Get similar students
-    df = load_dataset(settings.DATASET_PATH)
-    kmeans = get_kmeans(n_clusters)
-    X_all = scaler.transform(df[FEATURES])
-    all_labels = kmeans.predict(X_all)
-    df["cluster"] = all_labels
-    
+
     similar = df[df["cluster"] == predicted_cluster].head(5)
     
     # Cluster stats for label
